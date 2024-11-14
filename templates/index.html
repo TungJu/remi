@@ -27,7 +27,7 @@
                     week: '周',
                     day: '日',
                 },
-                allDayText: "全天",
+                allDayText: '全天',
                 timeFormat: 'HH:mm',
                 views: {
                     month: { titleFormat: 'YYYY年MMMM月' },
@@ -51,54 +51,42 @@
                 selectHelper: true,
                 editable: true,
                 eventLimit: true,
-                select: function (start) {
-                    // 顯示表單
-                    $('#eventForm').show();
-                    // 當表單提交時，使用 async/await 發送 AJAX 請求
-                    $('#eventDataForm').on('submit', async function (e) {
-                        e.preventDefault();  // 防止表單的默認提交行為
-    
-                        // 取得表單數據
-                        let mental = $('#mental').val();
-                        let weight = $('#weight').val();
-                        let video = $('#video').val();
-                        let time = $.fullCalendar.formatDate(start, "Y-MM-DD HH:mm:ss");
-    
-                        // 使用 async/await 發送 AJAX 請求
-                        try {
-                            let response = await $.ajax({
-                                type: "post",
-                                url: '/add/',
-                                headers: {
-                                    'X-CSRFToken': csrftoken
-                                },
-                                data: {
-                                    'time': time,
-                                    'mental': mental,
-                                    'weight': weight,
-                                    'video': video
-                                },
-                                dataType: "json"
-                            });
-    
-                            // 成功後，刷新事件，並隱藏表單
-                            $('#calendar').fullCalendar('refetchEvents');
-                            alert("Added Successfully");
-    
-                            // 重設表單並隱藏
-                            $('#eventDataForm')[0].reset();
-                            $('#eventForm').hide();
-                        } catch (error) {
-                            alert('There is a problem!!!');
-                            console.error(error);  // 打印錯誤信息
+                dayClick: function(date, jsEvent, view) {
+                    const clickedDate = date.format("YYYY-MM-DD");
+                    const eventList = $("#event-list");
+                    // 清空之前的資料
+                    $("#event-list").empty();
+                    $("#event-list").text(`日期: ${clickedDate}`);
+
+                    // 發送 AJAX 請求以獲取當天的資料
+                    $.ajax({
+                        url: `/daily_logs_by_date/${clickedDate}/`,  // 後端 API
+                        method: 'GET',
+                        success: function(data) {
+                            if (data.length > 0) {
+                                data.forEach(log => {
+                                    $("#event-list").append(
+                                        `<li>
+                                            <strong>心理狀態：</strong> ${log.mental} <br/>
+                                            <strong>體重：</strong> ${log.weight} <br/>
+                                            <strong>影像：</strong> ${log.video} <br/>
+                                            <button class="updateBtn" id="${clickedDate}">修改資料</button>
+                                        </li>`
+                                    );
+                                });
+                            } else {
+                                $("#event-list").append(
+                                    `<li>當天沒有資料。<br/>
+                                        <button class="addBtn" id="${clickedDate}">新增資料</button>
+                                    </li>
+                                    `
+                                );
+                            }
+                        },
+                        error: function() {
+                            alert("無法加載當天資料！");
                         }
                     });
-                },
-                eventRender: function(event, element) {
-                    // 在事件區域中顯示 mental 值
-                    if (event.title) {
-                        element.find('.fc-title').text(event.title);
-                    }
                 }
             });
         });
@@ -125,6 +113,10 @@
             <!-- /.box-body -->
         </div>
     </section>
+    <div>
+        <ul id="event-list"></ul>
+
+    </div>
     <!-- 表單彈出區域 -->
     <div id="eventForm" style="display:none;">
         <h3>請輸入活動資料</h3>
@@ -141,14 +133,7 @@
             <input type="submit" value="提交">
         </form>
     </div>
-    <!-- /.content -->
-    <h1>hello_world!</h1>
-    {% for r in daily_log_list %}
-    <ul>
-        <li>time : {{ r.time }}</li>
-        <li>mental : {{ r.mental }}</li>
-        <li>daily_condition video : {{ r.video }}</li>
-    </ul>        
-    {% endfor %}
+
+
 </body>
 </html>

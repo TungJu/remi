@@ -17,12 +17,13 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from myapp import views
-from myapp.views import diary,all_daily_log,add
+from myapp.views import diary,all_daily_log,daily_logs_by_date,add_daily_log
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('diary/',diary),
-    path('test/',all_daily_log),
+    path('all_daily/',all_daily_log),
+    path('daily_logs_by_date/<str:date>/', views.daily_logs_by_date, name='daily_logs_by_date'),
     path('all_daily_log/', views.all_daily_log, name='all_daily_log'),
-    path('add/', views.add, name='add')
+    path('add_daily_log/', views.add_daily_log, name='add_daily_log')
 ]
