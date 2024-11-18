@@ -16,14 +16,16 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from django.views.static import serve
+from .settings import MEDIA_ROOT
 from myapp import views
-from myapp.views import diary,all_daily_log,daily_logs_by_date,add_daily_log
+from myapp.views import calendar_page,daily_logs_by_date,AllDailyLogsView,daily_log_manage
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('diary/',diary),
-    path('all_daily/',all_daily_log),
+    path('calendar/', calendar_page, name='calendar_page'),  # 顯示日曆的頁面
+    path('AllDailyLogsView/', AllDailyLogsView.as_view(), name='AllDailyLogsView'),
     path('daily_logs_by_date/<str:date>/', views.daily_logs_by_date, name='daily_logs_by_date'),
-    path('all_daily_log/', views.all_daily_log, name='all_daily_log'),
-    path('add_daily_log/', views.add_daily_log, name='add_daily_log')
+    path('daily_log_manage/<str:date>/', daily_log_manage, name='daily_log_manage'),
+    path('media/<str:path>', serve, {'document_root': MEDIA_ROOT}),  # ��理上��的影片)
 ]

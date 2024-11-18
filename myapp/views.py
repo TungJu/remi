@@ -1,39 +1,44 @@
 import json
 from django.shortcuts import render
 from django.views.generic.base import View
+from django.views.decorators.csrf import csrf_exempt
+from django.shortcuts import get_object_or_404
 from django.http import HttpResponse
 from django.http import JsonResponse 
 from django.utils import timezone
-from datetime import datetime
+from datetime import datetime, timedelta
+from django.utils.timezone import make_aware, get_default_timezone
+from django.utils.timezone import localtime
 
 from myapp.models import daily_log #引入model
 # from myapp.forms import daily_log_form
 # Create your views here.
-def diary(request): 
-    daily_log_list = daily_log.objects.all()
-    return render(request, 'index.html',locals())
 
-class MyReportView(View):
+def calendar_page(request): 
+    return render(request, 'calendar.html',locals())
 
+# 獲取FullCalendar所有日誌事件
+class AllDailyLogsView(View):
     def get(self, request):
-        ret = dict()
-        my_report_all = daily_log.objects.all()
-        ret['my_report_all'] = my_report_all
-        return render(request, 'index.html',locals())
+        logs = daily_log.objects.all()
+        out = []
+        for log in logs:
+            out.append({                                                                                       
+                "title": f"精神飽滿: {log.mental}",
+                "start": localtime(log.time),
+                "allDay": True,
+            })
+
+        return JsonResponse(out, safe=False)
+    
+# class AllDailyLogsView(View):
+
+#     def get(self, request):
+#         logs = daily_log.objects.all()
+
+#         return HttpResponse(logs)
 
 
-def all_daily_log(request):                                                                                                 
-    all_daily_log = daily_log.objects.all()
-    out = []
-    for i in all_daily_log:
-        out.append({                                                                                       
-            'time' : i.time.strftime("%Y/%m/%d"),                                                         
-            'mental' : i.mental,
-            'weight' : i.weight,
-            'video' : i.video
-        })                                                                                                               
-                                                                                                                      
-    return JsonResponse(out, safe=False) 
 
 def daily_logs_by_date(request, date):
     try:
@@ -56,46 +61,33 @@ def daily_logs_by_date(request, date):
     except ValueError:
         return JsonResponse({"error": "Invalid date format. Use YYYY-MM-DD."}, status=400)
 
-def add_daily_log(request):
+
+# 新增或修改日誌資料
+@csrf_exempt
+def daily_log_manage(request, date):
     if request.method == "POST":
+        # 新增資料
         data = json.loads(request.body)
-        time = data.get("time")
-        mental = data.get("mental")
-        weight = data.get("weight")
-        video = data.get("video")
+        log = daily_log.objects.create(
+            time=date,
+            mental=data.get("mental"),
+            weight=data.get("weight"),
+            video=data.get("video"),
+        )
+        return JsonResponse({"message": "日誌已成功新增", "date": date})
 
-        # 創建並保存新日誌
-        log = daily_log(time=time, mental=mental, weight=weight, video=video)
+    elif request.method == "PUT":
+        # 修改資料
+        data = json.loads(request.body)
+        # 解析日期
+        date_obj = datetime.strptime(date, "%Y-%m-%d").date()
+        # 過濾符合日期的紀錄
+        log = daily_log.objects.get(time__date=date_obj)
+
+        log.mental = data.get("mental")
+        log.weight = data.get("weight")
+        log.video = data.get("video")
         log.save()
+        return JsonResponse({"message": "日誌已成功更新"})
 
-        return JsonResponse({"message": "新增成功"}, status=200)
-    return JsonResponse({"error": "無效的請求"}, status=400)
-# def add(request):
-
-#     if request.method == "POST":
-#         time_str = request.POST.get("time", None)
-#         naive_time = timezone.datetime.strptime(time_str, "%Y-%m-%d %H:%M:%S")
-#         aware_time = timezone.make_aware(naive_time, timezone.get_current_timezone())
-#         mental = request.POST.get("mental", None)
-#         weight = request.POST.get("weight", None)
-#         video = request.POST.get("video", None)
-#         log = daily_log(time=aware_time, mental=mental, weight=weight,video=video)
-#         log.save()
-#         data = {}
-#         return JsonResponse({"message": "Added Successfully"})
-#     else:
-#         # 如果請求方法不是 POST，返回錯誤回應
-#         return JsonResponse({"error": "Invalid request method"}, status=400)
- 
-# def update(request):
-#     start = request.GET.get("start", None)
-#     end = request.GET.get("end", None)
-#     title = request.GET.get("title", None)
-#     id = request.GET.get("id", None)
-#     event = Events.objects.get(id=id)
-#     event.start = start
-#     event.end = end
-#     event.name = title
-#     event.save()
-#     data = {}
-#     return JsonResponse(data)
+    return JsonResponse({"error": "無效的請求方法"}, status=400)
