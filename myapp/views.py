@@ -24,7 +24,7 @@ class AllDailyLogsView(View):
         out = []
         for log in logs:
             out.append({                                                                                       
-                "title": f"精神飽滿: {log.mental}",
+                "title": f"精神: {log.mental}",
                 "start": localtime(log.time),
                 "allDay": True,
             })
