@@ -1,11 +1,12 @@
 
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token }}">
-    <title>hello_world</title>
+    <title>remi♥</title>
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
       
@@ -13,52 +14,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.9.0/fullcalendar.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.9.0/fullcalendar.js"></script>
-    <script>
-        function bindEventButtons() {
-
-            $('.addBtn').off('click').on('click', function() {
-                const date = $(this).attr('id');
-                $('#eventForm').show();
-                $('#eventDataForm').off('submit').on('submit', function(e) {
-                    e.preventDefault();
-                    submitFormData(date, 'POST');
-                });
-            });
     
-            $('.updateBtn').off('click').on('click', function() {
-                const date = $(this).attr('id');
-                $('#eventForm').show();
-                $('#eventDataForm').off('submit').on('submit', function(e) {
-                    e.preventDefault();
-                    submitFormData(date, 'PUT');
-                });
-            });
-        }
-    
-        function submitFormData(date, method) {
-            const data = JSON.stringify({
-                mental: $('#mental').val(),
-                weight: $('#weight').val(),
-                video: $('#video').val(),
-            });
-    
-            $.ajax({
-                url: `/daily_log_manage/${date}/`,
-                method: method,
-                contentType: 'application/json',
-                data: data,
-                success: function() {
-                    alert("資料已成功提交！");
-                    $('#eventForm').hide();
-                    $('#calendar').fullCalendar('refetchEvents'); // 更新日曆
-                },
-                error: function() {
-                    alert("資料提交失敗！");
-                }
-            });
-        }
-    </script>
-
+    <script src="{% static 'main.js' %}" defer></script>
     <script type="text/javascript">
         $(function () {
     
@@ -83,7 +40,7 @@
                 dayNames: ["星期天", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"],
                 dayNamesShort: ["星期天", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"],
     
-                contentHeight: 650,
+                contentHeight: 550,
                 header: {
                     left: 'prev,next today',
                     center: 'title',
@@ -103,7 +60,23 @@
                     eventList.empty();
                     
                     eventList.text(`日期: ${clickedDate}`);
+                    eventList.append(
+                        `<!-- 表單彈出區域 -->
+                        <div id="eventForm" style="display:none;">
+                            <h2>請輸入資料</h2>
+                            <form id="eventDataForm">
+                                <label for="mental">精神飽滿:</label>
+                                <input type="text" id="mental" name="mental" required><br>
 
+                                <label for="weight">體重:</label>
+                                <input type="text" id="weight" name="weight" required><br>
+
+                                <label for="video">視訊連結:</label>
+                                <input type="text" id="video" name="video" required><br>
+
+                                <input type="submit" value="提交">
+                            </form>`
+                    )                    
                     // 發送 AJAX 請求以獲取當天的資料
                     $.ajax({
                         url: `/daily_logs_by_date/${clickedDate}/`,  // 後端 API
@@ -118,7 +91,7 @@
                                             <strong>體重：</strong> ${log.weight} <br/>
                                             <strong>影像：</strong> ${log.video} <br/>
                                             <video controls width="640" height="360">
-                                                <source src="../media/${log.video}.mp4">
+                                                <source src="../static/${log.video}.mp4">
                                                 您的瀏覽器不支援 video 標籤。
                                             </video>
                                             <button class="updateBtn" id="${clickedDate}">修改資料</button>
@@ -144,15 +117,95 @@
             });
         });
     </script>
-    
+    <style>
+        .container {
+            display: flex;                /* 使用 Flexbox 布局 */
+            margin: auto;
+            align-items: center;          /* 子元素在垂直方向居中 */
+            gap: 20px;                    /* 子元素之间的间距 */
+            padding: 5px;                /* 容器内边距 */
+        }
+        /* 行样式 */
+        .row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        /* 图标和文字部分 */
+        .icon-text {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .icon {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            margin-right: 5px;
+            vertical-align: middle;
+        }
+
+    </style>
     
 
 
 </head>
 <body>
     <br/>
-    <h2 align="center"><a href="#">title</a></h2>
-    <br/>
+    <h2 align="center">remi♥的觀察紀錄</h2>
+    <div>
+        <div class="container">
+            <!-- logo -->
+            <img src="{% static 'logo.png' %}" alt="remi♥" width="100px" height="100px" style="border-radius: 50%; object-fit: cover;">
+            <div>
+                <h1 style="margin: 0; font-size: 24px;">remi</h1>
+                <p style="margin: 5px 0 0 0; font-size: 16px;">三花萌妹子</p>
+
+                <a href="https://www.instagram.com/remi_catlife?igsh=MTJua2hrYW1xcW5kcQ==" target="_blank">
+                    <img src="{% static 'ig.png' %}" alt="igicon" class="icon">
+                </a>
+            </div>
+        </div>
+        <!--  -->
+        <div class="container">
+            <!-- 生日 -->
+            <div class="row">
+                <div class="icon-text">
+                    <img src="{% static 'birthday.png' %}" alt="生日icon" class="icon">
+                    <span>生日：</span>
+                    <span>2023年8月25日</span>
+                </div>
+                <div class="days">
+                    <span>日數：</span>
+                    <span id="birthDays"></span>
+                </div>
+            </div>
+            <!-- 家人 -->
+            <div class="row">
+                <div class="icon-text">
+                    <img src="{% static 'home.png' %}" alt="家icon" class="icon">
+                    <span>成为家人的那一天：</span>
+                    <span>2024年9月27日</span>
+                </div>
+                <div class="days">
+                    <span>日數：</span>
+                    <span id="homeDays"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- <div class="container">
+            <p>
+                <span class="icon" style="background: url('../static/home.png') no-repeat center / cover;"></span>
+                成为家人的那一天：<br>2024年9月27日
+            </p>
+            <p>日數：<span id="homeDays"></p>
+        </div> -->
+    </div>
 
 
     <!-- FullCalendar 容器 -->
@@ -171,22 +224,7 @@
 
     </div>
     
-    <!-- 表單彈出區域 -->
-    <div id="eventForm" style="display:none;">
-        <h3>請輸入資料</h3>
-        <form id="eventDataForm">
-            <label for="mental">精神飽滿:</label>
-            <input type="text" id="mental" name="mental" required><br>
 
-            <label for="weight">體重:</label>
-            <input type="text" id="weight" name="weight" required><br>
-
-            <label for="video">視訊連結:</label>
-            <input type="text" id="video" name="video" required><br>
-
-            <input type="submit" value="提交">
-        </form>
-    </div>
 
 
 </body>

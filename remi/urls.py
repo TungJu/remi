@@ -17,9 +17,11 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from django.views.static import serve
-from .settings import MEDIA_ROOT
+from remi.settings import STATIC_ROOT
 from myapp import views
 from myapp.views import calendar_page,daily_logs_by_date,AllDailyLogsView,daily_log_manage
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -27,5 +29,5 @@ urlpatterns = [
     path('AllDailyLogsView/', AllDailyLogsView.as_view(), name='AllDailyLogsView'),
     path('daily_logs_by_date/<str:date>/', views.daily_logs_by_date, name='daily_logs_by_date'),
     path('daily_log_manage/<str:date>/', daily_log_manage, name='daily_log_manage'),
-    path('media/<str:path>', serve, {'document_root': MEDIA_ROOT}),  # ��理上��的影片)
-]
+    path('static/<str:path>', serve, {'document_root': STATIC_ROOT}),
+]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

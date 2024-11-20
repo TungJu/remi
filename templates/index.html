@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>日期显示</title>
+    <style>
+        /* 全局样式 */
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    background-color: #f9f9f9;
+}
+
+/* 容器 */
+.date-container {
+    width: 400px;
+    margin: auto;
+    background: #fff;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* 行样式 */
+.row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+}
+
+/* 图标和文字部分 */
+.icon-text {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.icon {
+    width: 24px;
+    height: 24px;
+}
+
+.label {
+    font-weight: bold;
+    color: #555;
+}
+
+.date {
+    font-size: 14px;
+    color: #777;
+}
+
+/* 日数部分 */
+.days {
+    text-align: right;
+}
+
+.duration {
+    font-size: 14px;
+    color: #555;
+}
+
+    </style>
+
+</head>
+<body>
+    <div class="date-container">
+        <!-- 第一行 -->
+        <div class="row">
+            <div class="icon-text">
+                <img src="birthday-icon.png" alt="生日图标" class="icon">
+                <span class="label">生日</span>
+                <span class="date">2021年2月14日</span>
+            </div>
+            <div class="days">
+                <span class="label">日数</span>
+                <span class="duration">3年 8个月 26日</span>
+            </div>
+        </div>
+        <!-- 第二行 -->
+        <div class="row">
+            <div class="icon-text">
+                <img src="home-icon.png" alt="家图标" class="icon">
+                <span class="label">成为家族的那一天</span>
+                <span class="date">2021年5月3日</span>
+            </div>
+            <div class="days">
+                <span class="label">日数</span>
+                <span class="duration">3年 6个月 5日</span>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
