@@ -12,7 +12,7 @@ function calculateDateDiff(startDate, endDate) {
     // 如果天數為負數，借一个月
     if (days < 0) {
         months -= 1;
-        const prevMonth = new Date(end.getFullYear(), end.getMonth(), 0); // 获取上个月的最后一天
+        const prevMonth = new Date(end.getFullYear(), end.getMonth(), 0); // 獲取上个月的最后一天
         days += prevMonth.getDate();
     }
 
@@ -27,7 +27,7 @@ function calculateDateDiff(startDate, endDate) {
 
 // 輸入數據
 const birthDate = "2023-08-25";
-const today = new Date().toISOString().split("T")[0]; // 当前日期
+const today = new Date().toISOString().split("T")[0]; // 當前日期
 const homeDate = "2024-09-27";
 
 // 計算日数

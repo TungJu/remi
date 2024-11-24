@@ -25,7 +25,7 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('calendar/', calendar_page, name='calendar_page'),  # 顯示日曆的頁面
+    path('', calendar_page, name='calendar_page'),  # 顯示日曆的頁面
     path('AllDailyLogsView/', AllDailyLogsView.as_view(), name='AllDailyLogsView'),
     path('daily_logs_by_date/<str:date>/', views.daily_logs_by_date, name='daily_logs_by_date'),
     path('daily_log_manage/<str:date>/', daily_log_manage, name='daily_log_manage'),
