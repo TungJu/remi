@@ -19,7 +19,7 @@ from django.urls import path
 from django.views.static import serve
 from remi.settings import STATIC_ROOT
 from myapp import views
-from myapp.views import calendar_page,daily_logs_by_date,AllDailyLogsView,daily_log_manage
+from myapp.views import calendar_page,AllDailyLogsView,daily_logs_by_date,daily_log_manage
 from django.conf import settings
 from django.conf.urls.static import static
 
